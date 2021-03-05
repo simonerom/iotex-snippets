@@ -1,14 +1,11 @@
 ## iotex-snippets
 A few snippets and scripts useful for IoTeX
 
-### b2e
+### [b2e](https://github.com/simonerom/iotex-snippets/tree/main/shell/b2e)
 Find epoch in which a block was produced
-https://github.com/simonerom/iotex-snippets/tree/main/shell/b2e
 
-### findBlocksByMinActions
+### [findBlocksByMinActions](https://github.com/simonerom/iotex-snippets/tree/main/shell/findBlocksByMinActions)
 Find all blocks including a min number of actions
-https://github.com/simonerom/iotex-snippets/tree/main/shell/findBlocksByMinActions
 
-### listProducedBlocks
+### [listProducedBlocks](https://github.com/simonerom/iotex-snippets/tree/main/shell/listProducedBlocks)
 List blocks produced by a node and spot missed ones
-https://github.com/simonerom/iotex-snippets/tree/main/shell/listProducedBlocks
