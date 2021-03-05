@@ -1,0 +1,25 @@
+#!/bin/bash
+endEpoch=$1
+epochCount=$2
+minActions=$3
+
+let "startEpoch = $endEpoch-$epochCount+1"
+
+echo "I'm looking for any block in epochs [$startEpoch..$endEpoch] with at least $minActions actions included..." 
+echo ""
+
+echo "epoch, epoch block, chain block, num actions"
+for (( epoch=$startEpoch; epoch<=$endEpoch; epoch++ ))
+do
+  startHeight=$(ioctl node delegate -e $epoch -o json |jq .message.startBlock)
+  i=1
+  for (( block=$startHeight; block<$startHeight+720; block++ ))
+  do
+    actions=$(ioctl bc block $block -o json |jq .message.block.numActions)
+    if (( actions>=minActions )); then
+      echo $epoch, $i, $block, $actions
+    fi
+    let "i++"
+  done
+  
+done

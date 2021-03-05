@@ -1,0 +1,52 @@
+#!/bin/bash
+epoch=$1
+producer=$2
+
+echo "Printing all blocks from epoch $epoch that have been produced by $producer"
+
+startHeight=$(ioctl node delegate -e $epoch -o json |jq .message.startBlock)
+let "endHeight=startHeight+719"
+
+echo Start Hight: $startHeight, End Height: $endHeight 
+echo ""
+echo "Searching for first block produced..."
+
+firstProductionHeight=0
+
+# Detect the height of the first block produced by $producer
+for (( height=$startHeight; height<=$endHeight; height++ ))
+do
+  bproducer=$(ioctl bc block $height -o json | jq .message.block.producerAddress -r)
+  if [ "$bproducer" == "$producer" ]; then
+      echo First block produced at height $height
+      firstProductionHeight=$height
+      break
+  fi
+done
+
+# TODO: check if $height > $endHeight, in which case te node did not produce any blocks
+
+let "nextExpectedHeight=firstProductionHeight"
+let "missed=0"
+let "i=1"
+while [ $nextExpectedHeight -lt $endHeight ]
+do
+  bproducer=$(ioctl bc block $nextExpectedHeight -o json | jq .message.block.producerAddress -r)
+  if [ "$bproducer" == "$producer" ]; then
+      echo $i: Block $nextExpectedHeight OK
+  else
+      echo $i: Block $nextExpectedHeight ! MISSED !
+      let "missed+=1"
+   fi
+  let "i++"
+  let "nextExpectedHeight=nextExpectedHeight+24"
+done
+
+echo ___________
+
+missedBlocks=$(( 31 - i + missed ))
+echo "This node missed $missedBlocks blocks in epoch $epoch."
+echo ""
+if [ $i -lt 31 ]; then
+  echo Please notice: some blocks have been missed before the first produced block: the height of these blocks cannot be detected!
+fi
