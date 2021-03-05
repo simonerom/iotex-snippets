@@ -1,4 +1,8 @@
+Usage:
 `./findBlocksByMinActions endEpoch epochCount minActions`
+
+Description:
+Searches all blocks for all epochs from endEpoch down to epochCount epochs in the past, and prints those blcoks that included at least minActions actions. This is useful to spot blocks with many actions included and correlate with effects on the network.
 
 Example:
 
