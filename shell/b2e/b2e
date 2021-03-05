@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Given a block height, provides the eopch number when it was produced 
+
+height=$1
+
+currentHeight=$(ioctl bc info -o json |jq .message.info.height)
+blocksElapsed=$(( currentHeight - height  ))
+epochsElapsed=$(( blocksElapsed / 720 ))
+currentEpoch=$(ioctl bc info -o json |jq .message.info.epoch.num)
+epoch=$(( currentEpoch - epochsElapsed ))
+
+echo "Block $height was produced in epoch $epoch"
