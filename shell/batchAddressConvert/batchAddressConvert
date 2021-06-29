@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# This command expects the path to the csv file as the first argument
+# The csv file is expected to have 1 column containing a IoTeX address
+# in either IoTeX form or Ethereum form.
+
+INPUT=$1
+
+# backup the current separator
+OLDIFS=$IFS
+
+# set the new separator
+IFS=','
+
+# Check file existance
+[ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
+
+# Cycle among the csv rows and extract the address
+while read address
+do
+    # Remove trailing \r
+    address=$(echo $address | sed 's/\r$//')
+    # Use ioctl to convert
+    result=$(ioctl account ethaddr $address)
+    # split the output of ioctl
+    IFS=' - '
+    read -ra array <<< "$result"
+    echo ${array[0]},${array[1]}
+done < $INPUT
+IFS=$OLDIFS
