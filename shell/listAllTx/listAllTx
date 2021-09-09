@@ -1,0 +1,14 @@
+#!/bin/bash
+
+address=$1
+max=$2
+count=1000
+start=0
+total=1000
+
+while [ $total -le $max ]
+do
+echo $start
+  grpcurl -d '{"byAddr": {"address": "'$address'", "start": '$start', "count": '$count'}}' api.mainnet.iotex.one:443 iotexapi.APIService.GetActions |jq '.actionInfo |.[]|.actHash' > txlist_$start
+  start=$((start+1000))
+done
