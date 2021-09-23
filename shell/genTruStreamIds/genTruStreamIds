@@ -1,0 +1,23 @@
+#!/bin/bash
+startIndex=$1
+endIndex=$2
+
+count=$((endIndex - startIndex + 1))
+
+accounts=$(ioctl account create -n $count)
+privKeys=( $(echo $accounts | jq -r '.[]|.[].privateKey') )
+addresses=( $(echo $accounts | jq -r '.[]|.[].address') )
+
+
+index=0
+for i in $(seq -f "%015g" $startIndex $endIndex)
+do
+  
+  privKey="${privKeys[index]}"
+  address="${addresses[index]}"
+  address=$(ioctl account ethaddr $address | tr -d ' - '|cut -d '-' -f 2)
+  
+  echo $(echo "$i + 200000000000000"| bc),$privKey,$address
+  
+  index=$((index + 1))
+done
